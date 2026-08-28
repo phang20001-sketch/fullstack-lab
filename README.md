@@ -82,38 +82,14 @@ pnpm dev
 
 ## 生产环境
 
-生产环境连接信息保存在不会提交的 `application-prod.yml` 中，也可以通过以下环境变量显式设置：
-
-```powershell
-$env:SPRING_PROFILES_ACTIVE = 'prod'
-
-$env:DB_URL = 'jdbc:postgresql://<服务器地址>:5432/fullstack_lab'
-$env:DB_USERNAME = 'postgres'
-$env:DB_PASSWORD = '<服务器密码>'
-$env:DB_POOL_INITIAL_SIZE = '5'
-$env:DB_POOL_MIN_IDLE = '5'
-$env:DB_POOL_MAX_ACTIVE = '20'
-
-$env:REDIS_HOST = '<服务器地址>'
-$env:REDIS_PORT = '6379'
-$env:REDIS_DATABASE = '0'
-$env:REDIS_PASSWORD = '<服务器密码>'
-$env:REDIS_SSL_ENABLED = 'false'
-
-$env:RABBITMQ_HOST = '<服务器地址>'
-$env:RABBITMQ_PORT = '5672'
-$env:RABBITMQ_USERNAME = 'guest'
-$env:RABBITMQ_PASSWORD = '<服务器密码>'
-$env:RABBITMQ_VIRTUAL_HOST = '/'
-$env:RABBITMQ_SSL_ENABLED = 'false'
-```
+生产环境连接信息直接写在 `backend/src/main/resources/application-prod.yml` 中。该文件包含正式服务器地址和密码，已被根目录 `.gitignore` 排除，不会提交到 GitHub。
 
 构建并启动：
 
 ```powershell
 cd D:\test\fullstack-lab\backend
 .\mvnw.cmd clean package
-java -jar .\target\backend-0.0.1-SNAPSHOT.jar
+java -jar .\target\backend-0.0.1-SNAPSHOT.jar --spring.profiles.active=prod
 ```
 
 生产部署时应由 Nginx 或网关将 `/api` 转发到后端，不要使用 Vite 开发代理。

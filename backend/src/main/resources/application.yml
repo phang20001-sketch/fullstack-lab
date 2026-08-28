@@ -19,7 +19,7 @@ mybatis-plus: # MyBatis-Plus 持久层配置
       id-type: auto # 主键由数据库自增或 identity 机制生成
 
 server: # 内嵌 Web 服务器配置
-  port: ${SERVER_PORT:8080} # 服务端口；优先读取 SERVER_PORT，未设置时使用 8080
+  port: 8080 # 服务端口；固定使用 8080
   shutdown: graceful # 关闭应用时等待正在处理的请求结束，实现优雅停机
 
 management: # Spring Boot Actuator 监控配置
@@ -35,5 +35,5 @@ management: # Spring Boot Actuator 监控配置
 
 info: # /actuator/info 返回的自定义信息
   app: # 应用信息分组
-    name: ${spring.application.name} # 引用上方配置的应用名称
+    name: fullstack-lab-backend # 应用名称；与 spring.application.name 保持一致
     description: React and Spring Boot learning project # 应用用途说明
