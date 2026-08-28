@@ -1,0 +1,33 @@
+spring: # Spring Boot 自动化测试环境配置根节点
+  autoconfigure: # Spring Boot 自动配置控制
+    exclude: # 测试时排除不需要的自动配置类
+      - org.redisson.spring.starter.RedissonAutoConfigurationV4 # 不创建真实 Redisson 连接，避免测试依赖外部 Redis
+  datasource: # 测试数据库配置
+    type: com.alibaba.druid.pool.DruidDataSource # 测试中同样使用 Druid，验证连接池配置可正常加载
+    url: jdbc:h2:mem:fullstack_lab;MODE=PostgreSQL;DB_CLOSE_DELAY=-1 # 使用 PostgreSQL 兼容模式的 H2 内存库，并在测试 JVM 存活期间保留数据
+    driver-class-name: org.h2.Driver # H2 数据库 JDBC 驱动类
+    username: sa # H2 测试数据库默认用户名
+    password: # H2 测试数据库使用空密码
+    druid: # 测试环境 Druid 连接池参数
+      initial-size: 1 # 测试启动时初始化 1 个数据库连接
+      min-idle: 1 # 测试连接池至少保持 1 个空闲连接
+      max-active: 2 # 测试连接池最多允许 2 个活动连接
+      validation-query: SELECT 1 # 测试连接是否有效的轻量 SQL
+  sql: # Spring SQL 初始化配置
+    init: # schema.sql 和 data.sql 初始化行为
+      mode: always # 每次测试启动都执行 schema.sql 初始化表结构
+  flyway: # Flyway 测试环境配置
+    enabled: false # 测试使用 schema.sql 建表，因此关闭 Flyway，避免重复初始化
+  rabbitmq: # RabbitMQ 测试配置
+    listener: # 消息监听容器配置
+      simple: # SimpleMessageListenerContainer 配置
+        auto-startup: false # 测试启动时不自动连接 RabbitMQ 并启动简单监听器
+      direct: # DirectMessageListenerContainer 配置
+        auto-startup: false # 测试启动时不自动连接 RabbitMQ 并启动直接监听器
+
+management: # 测试环境 Actuator 配置
+  health: # 外部组件健康检查配置
+    rabbit: # RabbitMQ 健康检查项
+      enabled: false # 测试时关闭 RabbitMQ 健康检查，避免依赖外部服务
+    redis: # Redis 健康检查项
+      enabled: false # 测试时关闭 Redis 健康检查，避免依赖外部服务

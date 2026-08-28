@@ -1,0 +1,39 @@
+spring: # Spring Boot 通用配置根节点
+  application: # 当前应用的基本信息
+    name: fullstack-lab-backend # 应用名称，会用于日志、监控和服务标识
+  profiles: # 多环境配置
+    default: dev # 未显式指定环境时默认启用 dev 开发环境
+  datasource: # 数据源通用配置
+    type: com.alibaba.druid.pool.DruidDataSource # 强制使用 Druid 作为数据库连接池实现
+
+mybatis-plus: # MyBatis-Plus 持久层配置
+  mapper-locations: classpath*:/mapper/**/*.xml # 扫描所有 mapper 目录下的 XML SQL 映射文件
+  type-aliases-package: com.example.fullstacklab.domain # 为实体类注册短类名，XML 中可直接写 LearningNote 等名称
+  configuration: # 原生 MyBatis 行为配置
+    map-underscore-to-camel-case: true # 将 created_at 等下划线字段自动映射为 createdAt
+    cache-enabled: false # 关闭 MyBatis 二级缓存，避免学习阶段出现缓存数据干扰
+    default-enum-type-handler: org.apache.ibatis.type.EnumTypeHandler # 枚举默认按枚举名称读写，而不是按序号读写
+  global-config: # MyBatis-Plus 全局配置
+    banner: false # 启动时不打印 MyBatis-Plus Banner
+    db-config: # MyBatis-Plus 数据库相关全局策略
+      id-type: auto # 主键由数据库自增或 identity 机制生成
+
+server: # 内嵌 Web 服务器配置
+  port: ${SERVER_PORT:8080} # 服务端口；优先读取 SERVER_PORT，未设置时使用 8080
+  shutdown: graceful # 关闭应用时等待正在处理的请求结束，实现优雅停机
+
+management: # Spring Boot Actuator 监控配置
+  endpoints: # Actuator 端点集合配置
+    web: # 通过 HTTP 暴露端点
+      exposure: # Web 端点暴露范围
+        include: health,info # 只开放 /actuator/health 和 /actuator/info
+  endpoint: # 单个 Actuator 端点配置
+    health: # 健康检查端点配置
+      probes: # Kubernetes 风格的存活与就绪探针配置
+        enabled: true # 启用 liveness 和 readiness 健康探针
+      show-details: never # 默认不向外暴露各组件的详细健康信息
+
+info: # /actuator/info 返回的自定义信息
+  app: # 应用信息分组
+    name: ${spring.application.name} # 引用上方配置的应用名称
+    description: React and Spring Boot learning project # 应用用途说明

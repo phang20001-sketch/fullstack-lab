@@ -1,0 +1,67 @@
+spring: # Spring Boot 开发环境配置根节点
+  config: # 当前配置文件的激活条件
+    activate: # 环境激活配置
+      on-profile: dev # 仅在启用 dev Profile 时加载本文件
+
+  datasource: # PostgreSQL 数据源配置
+    url: ${DEV_DB_URL:jdbc:postgresql://127.0.0.1:5432/fullstack_lab} # JDBC 地址；可用 DEV_DB_URL 覆盖，开发环境默认连接本机 fullstack_lab 库
+    username: ${DEV_DB_USERNAME:postgres} # 数据库用户名；默认 postgres
+    password: ${DEV_DB_PASSWORD:postgres} # 数据库密码；可用 DEV_DB_PASSWORD 覆盖，本地默认使用 postgres
+    druid: # Druid 开发环境连接池参数
+      initial-size: ${DEV_DB_POOL_INITIAL_SIZE:2} # 应用启动时初始化的数据库连接数，默认 2
+      min-idle: ${DEV_DB_POOL_MIN_IDLE:2} # 连接池保持的最小空闲连接数，默认 2
+      max-active: ${DEV_DB_POOL_MAX_ACTIVE:10} # 连接池允许同时存在的最大活动连接数，默认 10
+      max-wait: ${DEV_DB_POOL_MAX_WAIT:10000} # 获取连接时最长等待时间，单位毫秒，默认 10 秒
+      validation-query: SELECT 1 # 用于检测 PostgreSQL 连接是否可用的轻量 SQL
+      validation-query-timeout: 3 # 连接检测 SQL 的超时时间，单位秒
+      test-while-idle: true # 空闲连接巡检时执行连接有效性检测
+      test-on-borrow: false # 借出连接前不逐次检测，以减少请求开销
+      test-on-return: false # 归还连接时不逐次检测，以减少请求开销
+      keep-alive: true # 对长期空闲连接执行保活，降低连接被网络设备断开的概率
+      time-between-eviction-runs-millis: 60000 # 空闲连接检测线程的运行间隔，单位毫秒，此处为 1 分钟
+      min-evictable-idle-time-millis: 300000 # 连接至少空闲多久后可被回收，单位毫秒，此处为 5 分钟
+      pool-prepared-statements: true # 缓存数据库预编译语句 PreparedStatement
+      max-pool-prepared-statement-per-connection-size: 20 # 每个数据库连接最多缓存 20 条预编译语句
+      filter: # Druid 内置过滤器配置
+        stat: # SQL 统计与慢 SQL 过滤器
+          enabled: true # 开启 SQL 执行统计
+          log-slow-sql: true # 将超过阈值的慢 SQL 写入日志
+          slow-sql-millis: 2000 # 慢 SQL 判定阈值，单位毫秒，此处为 2 秒
+      stat-view-servlet: # Druid 浏览器监控控制台配置
+        enabled: false # 关闭 Druid 监控控制台，避免未授权访问
+      web-stat-filter: # Druid Web 请求与 SQL 关联统计配置
+        enabled: false # 关闭 Web 统计过滤器，减少额外开销
+
+  flyway: # Flyway 数据库版本迁移配置
+    enabled: true # 启动应用时自动执行尚未执行的数据库迁移脚本
+    clean-disabled: true # 禁止执行 clean 清库操作，防止误删数据
+    validate-on-migrate: true # 迁移前校验已执行脚本的校验和是否发生变化
+
+  data: # Spring 数据组件配置
+    redis: # Redisson Starter 读取的 Redis 连接配置
+      host: ${DEV_REDIS_HOST:127.0.0.1} # Redis 主机；可用 DEV_REDIS_HOST 覆盖，开发环境默认连接本机
+      port: ${DEV_REDIS_PORT:6379} # Redis 端口；默认 6379
+      database: ${DEV_REDIS_DATABASE:0} # Redis 逻辑库编号；默认使用 0 号库
+      password: ${DEV_REDIS_PASSWORD:} # Redis 密码；可用 DEV_REDIS_PASSWORD 覆盖，本地默认使用空密码
+      connect-timeout: 3s # 建立 Redis TCP 连接的最长等待时间
+      timeout: 3s # Redis 命令读写响应的最长等待时间
+
+  rabbitmq: # RabbitMQ 连接与消息可靠性配置
+    host: ${DEV_RABBITMQ_HOST:127.0.0.1} # RabbitMQ 主机；可用 DEV_RABBITMQ_HOST 覆盖，开发环境默认连接本机
+    port: ${DEV_RABBITMQ_PORT:5672} # RabbitMQ AMQP 端口；默认 5672
+    username: ${DEV_RABBITMQ_USERNAME:guest} # RabbitMQ 用户名；默认 guest，仅建议本机开发使用
+    password: ${DEV_RABBITMQ_PASSWORD:guest} # RabbitMQ 密码；可用 DEV_RABBITMQ_PASSWORD 覆盖，本地默认使用 guest
+    virtual-host: ${DEV_RABBITMQ_VIRTUAL_HOST:/} # RabbitMQ 虚拟主机，用于隔离交换机、队列和权限
+    connection-timeout: 5s # 建立 RabbitMQ 连接的最长等待时间
+    requested-heartbeat: 30s # 客户端请求的 AMQP 心跳间隔，用于及时发现断线
+    publisher-confirm-type: correlated # 开启带 CorrelationData 的发布确认，用于关联每条消息的 Broker 确认结果
+    publisher-returns: true # 消息无法路由到队列时将消息退回给生产者
+
+management: # 开发环境 Actuator 配置
+  endpoint: # 单个监控端点配置
+    health: # 健康检查端点配置
+      show-details: always # 开发环境始终显示数据库、Redis、RabbitMQ 等详细健康信息
+
+logging: # 日志配置
+  level: # 各包的日志级别
+    com.example.fullstacklab: DEBUG # 项目自身代码输出 DEBUG 及以上级别日志，便于开发排查
