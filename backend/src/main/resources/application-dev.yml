@@ -4,14 +4,14 @@ spring: # Spring Boot 开发环境配置根节点
       on-profile: dev # 仅在启用 dev Profile 时加载本文件
 
   datasource: # PostgreSQL 数据源配置
-    url: ${DEV_DB_URL:jdbc:postgresql://127.0.0.1:5432/fullstack_lab} # JDBC 地址；可用 DEV_DB_URL 覆盖，开发环境默认连接本机 fullstack_lab 库
-    username: ${DEV_DB_USERNAME:postgres} # 数据库用户名；默认 postgres
-    password: ${DEV_DB_PASSWORD:postgres} # 数据库密码；可用 DEV_DB_PASSWORD 覆盖，本地默认使用 postgres
+    url: jdbc:postgresql://127.0.0.1:5432/fullstack_lab # JDBC 地址；开发环境连接本机 PostgreSQL 的 fullstack_lab 数据库
+    username: postgres # PostgreSQL 登录用户名
+    password: postgres # PostgreSQL 登录密码
     druid: # Druid 开发环境连接池参数
-      initial-size: ${DEV_DB_POOL_INITIAL_SIZE:2} # 应用启动时初始化的数据库连接数，默认 2
-      min-idle: ${DEV_DB_POOL_MIN_IDLE:2} # 连接池保持的最小空闲连接数，默认 2
-      max-active: ${DEV_DB_POOL_MAX_ACTIVE:10} # 连接池允许同时存在的最大活动连接数，默认 10
-      max-wait: ${DEV_DB_POOL_MAX_WAIT:10000} # 获取连接时最长等待时间，单位毫秒，默认 10 秒
+      initial-size: 2 # 应用启动时初始化 2 个数据库连接
+      min-idle: 2 # 连接池保持至少 2 个空闲连接
+      max-active: 10 # 连接池最多允许 10 个活动连接
+      max-wait: 10000 # 获取连接时最长等待 10000 毫秒，即 10 秒
       validation-query: SELECT 1 # 用于检测 PostgreSQL 连接是否可用的轻量 SQL
       validation-query-timeout: 3 # 连接检测 SQL 的超时时间，单位秒
       test-while-idle: true # 空闲连接巡检时执行连接有效性检测
@@ -39,19 +39,19 @@ spring: # Spring Boot 开发环境配置根节点
 
   data: # Spring 数据组件配置
     redis: # Redisson Starter 读取的 Redis 连接配置
-      host: ${DEV_REDIS_HOST:127.0.0.1} # Redis 主机；可用 DEV_REDIS_HOST 覆盖，开发环境默认连接本机
-      port: ${DEV_REDIS_PORT:6379} # Redis 端口；默认 6379
-      database: ${DEV_REDIS_DATABASE:0} # Redis 逻辑库编号；默认使用 0 号库
-      password: ${DEV_REDIS_PASSWORD:} # Redis 密码；可用 DEV_REDIS_PASSWORD 覆盖，本地默认使用空密码
+      host: 127.0.0.1 # Redis 主机；开发环境连接本机
+      port: 6379 # Redis 服务端口
+      database: 0 # Redis 逻辑库编号；使用 0 号库
+      password: "" # Redis 登录密码；本机开发环境使用空密码
       connect-timeout: 3s # 建立 Redis TCP 连接的最长等待时间
       timeout: 3s # Redis 命令读写响应的最长等待时间
 
   rabbitmq: # RabbitMQ 连接与消息可靠性配置
-    host: ${DEV_RABBITMQ_HOST:127.0.0.1} # RabbitMQ 主机；可用 DEV_RABBITMQ_HOST 覆盖，开发环境默认连接本机
-    port: ${DEV_RABBITMQ_PORT:5672} # RabbitMQ AMQP 端口；默认 5672
-    username: ${DEV_RABBITMQ_USERNAME:guest} # RabbitMQ 用户名；默认 guest，仅建议本机开发使用
-    password: ${DEV_RABBITMQ_PASSWORD:guest} # RabbitMQ 密码；可用 DEV_RABBITMQ_PASSWORD 覆盖，本地默认使用 guest
-    virtual-host: ${DEV_RABBITMQ_VIRTUAL_HOST:/} # RabbitMQ 虚拟主机，用于隔离交换机、队列和权限
+    host: 127.0.0.1 # RabbitMQ 主机；开发环境连接本机
+    port: 5672 # RabbitMQ AMQP 服务端口
+    username: guest # RabbitMQ 登录用户名；guest 仅用于本机开发
+    password: guest # RabbitMQ 登录密码
+    virtual-host: / # RabbitMQ 虚拟主机；使用根虚拟主机
     connection-timeout: 5s # 建立 RabbitMQ 连接的最长等待时间
     requested-heartbeat: 30s # 客户端请求的 AMQP 心跳间隔，用于及时发现断线
     publisher-confirm-type: correlated # 开启带 CorrelationData 的发布确认，用于关联每条消息的 Broker 确认结果

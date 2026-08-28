@@ -62,35 +62,12 @@ Maven 全局配置位于 `D:\develop\apache-maven-3.9.16\conf\settings.xml`，�
 | Redis 3.2.12 | `127.0.0.1:6379`，数据库 `0` | 默认无密码 |
 | RabbitMQ 4.3.5 | `127.0.0.1:5672`，虚拟主机 `/` | `guest / guest` |
 
-数据库连接由 Druid 管理。开发环境默认连接池范围为 2～10，生产环境默认范围为 5～20；可以通过 `DEV_DB_POOL_*` 和 `DB_POOL_*` 环境变量调整。
-
-默认值都可以用 `DEV_` 环境变量覆盖：
-
-```powershell
-$env:DEV_DB_URL = 'jdbc:postgresql://127.0.0.1:5432/fullstack_lab'
-$env:DEV_DB_USERNAME = 'postgres'
-$env:DEV_DB_PASSWORD = 'postgres'
-$env:DEV_DB_POOL_INITIAL_SIZE = '2'
-$env:DEV_DB_POOL_MIN_IDLE = '2'
-$env:DEV_DB_POOL_MAX_ACTIVE = '10'
-
-$env:DEV_REDIS_HOST = '127.0.0.1'
-$env:DEV_REDIS_PORT = '6379'
-$env:DEV_REDIS_DATABASE = '0'
-$env:DEV_REDIS_PASSWORD = ''
-
-$env:DEV_RABBITMQ_HOST = '127.0.0.1'
-$env:DEV_RABBITMQ_PORT = '5672'
-$env:DEV_RABBITMQ_USERNAME = 'guest'
-$env:DEV_RABBITMQ_PASSWORD = 'guest'
-$env:DEV_RABBITMQ_VIRTUAL_HOST = '/'
-```
+以上开发环境连接值已经直接写在 `backend/src/main/resources/application-dev.yml` 中，无需在 PowerShell 中逐条设置环境变量。数据库连接由 Druid 管理，初始连接数为 2，最小空闲连接数为 2，最大活动连接数为 10。
 
 启动后端：
 
 ```powershell
 cd D:\test\fullstack-lab\backend
-$env:SPRING_PROFILES_ACTIVE = 'dev'
 .\mvnw.cmd spring-boot:run
 ```
 
